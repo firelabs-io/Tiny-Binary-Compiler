@@ -1,4 +1,5 @@
 import subprocess
+
 def tokenize(expression):
     tokens = []
     i = 0
@@ -22,39 +23,44 @@ def tokenize(expression):
     
     return tokens
 
-
-def remove(tokens):
+def remove_parentheses(tokens):
     return [token for token in tokens if token not in ('(', ')')]
 
-def codegen(code):
+def codegen(tokens):
     result = ['section .text', 'global _start', '_start:']
     i = 0
-    while i < len(code):
-        if code[i].isdigit():
-            result.append(f'mov rbx, {code[i]}')
-        if code[i] == '+':
-            result.append(f'add rbx, {code[i+1]}')
+    while i < len(tokens):
+        if tokens[i].isdigit():
+            result.append(f'mov ebx, {tokens[i]}')  
+        elif tokens[i] == '+':
+            result.append(f'add ebx, {tokens[i + 1]}')  
             i += 1
-        if code[i] == '-':
-            result.append(f'sub rbx, {code[i+1]}')
+        elif tokens[i] == '-':
+            result.append(f'sub ebx, {tokens[i + 1]}')  
             i += 1
-        if code[i] == '*':
-            result.append(f'imul rbx, {code[i+1]}')
+        elif tokens[i] == '*':
+            result.append(f'imul ebx, {tokens[i + 1]}')  
             i += 1
-        if code[i] == '/':
-            result.append(f'idiv rbx, {code[i+1]}')
+        elif tokens[i] == '/':
+            
+            result.append(f'mov eax, ebx')  
+            result.append(f'xor edx, edx')  
+            result.append(f'mov ebx, {tokens[i + 1]}')
+            result.append(f'idiv ebx')  
+            result.append(f'mov ebx, eax')  
             i += 1
         i += 1
-    result.append('mov eax, 60')
-    result.append('mov rdi, rbx')
-    result.append('syscall')
+    result.append('mov eax, 60')  
+    result.append('mov edi, ebx')  
+    result.append('syscall')  
     return result
 
 if __name__ == '__main__':
-    code = '(20 + 12) * 5'
+    code = '5 + (3 / 6)'  
     tokens = tokenize(code)
-    tokens = remove(tokens)
+    tokens = remove_parentheses(tokens)
     newcode = codegen(tokens)
+    
     with open('out.s', 'w') as file:
         for line in newcode:
             file.write(line + '\n')
