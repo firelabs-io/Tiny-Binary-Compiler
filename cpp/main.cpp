@@ -35,43 +35,47 @@ void codegen(std::vector<std::string> tokens){
     int i = 0;
     while(i < tokens.size()){
         if (tokens[i].find_first_not_of("0123456789") == std::string::npos){
-            program.push_back("mov rbx, " + tokens[i]);
+            program.push_back("mov ebx, " + tokens[i]);
             
         }
         if (tokens[i] == "+"){
-            program.push_back("add rbx, " + tokens[i+1]);
+            program.push_back("add ebx, " + tokens[i+1]);
             i++;
         }
         if (tokens[i] == "-"){
-            program.push_back("sub rbx, " + tokens[i+1]);
+            program.push_back("sub ebx, " + tokens[i+1]);
             i++;
         }
         if (tokens[i] == "*"){
-            program.push_back("imul rbx, " + tokens[i+1]);
+            program.push_back("imul ebx, " + tokens[i+1]);
             i++;
         }
         if (tokens[i] == "/"){
-            program.push_back("idiv rbx, " + tokens[i+1]);
+            program.push_back("mov eax, ebx");
+            program.push_back("xor edx, edx");
+            program.push_back("mov ebx, " + tokens[i+1]);
+            program.push_back("idiv ebx");
+            program.push_back("mov ebx, eax");
             i++;
         }
         i++;
     } 
 }
 int main(){
-    std::string code = "(20 + 12) * 5";
+    std::string code = "5 + (3 / 6)";
     std::vector<std::string> tokens = tokenize(code);
     codegen(tokens);
     program.push_back("mov eax, 60");
-    program.push_back("mov rdi, rbx");
+    program.push_back("mov edi, ebx");
     program.push_back("syscall");
     for (const auto& line : program) {
-        std::cout << line << std::endl;
+        std::cout << line << '\n';
     }
 
     std::ofstream outFile("out.s");
     if(outFile.is_open()){
         for (const auto& line : program) {
-            outFile << line << std::endl;
+            outFile << line << '\n';
         }
         outFile.close();
         // assuming you have nasm and ld installed
