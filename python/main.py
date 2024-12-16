@@ -56,7 +56,7 @@ def codegen(tokens):
     return result
 
 if __name__ == '__main__':
-    code = '5 + (3 / 6)'  
+    code = '(20 + 12) * 5'  
     tokens = tokenize(code)
     tokens = remove_parentheses(tokens)
     newcode = codegen(tokens)
