@@ -9,7 +9,7 @@ its very simple, in fact very simple, it tokenize, translate to assembly and gen
 # how run
 1. make sure nasm is installed (ld should be installed as is part of linux)
 2. run python python/main.py or g++ cpp/main.cpp -o cpp/main then execute main
-3. run out binary (in python/ or cpp/)
+3. run "out" binary (in python/ or cpp/)
 4. enjoy
 
 >[!NOTE]
