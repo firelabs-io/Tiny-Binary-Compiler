@@ -62,7 +62,7 @@ void codegen(std::vector<std::string> tokens){
     } 
 }
 int main(){
-    std::string code = "5 + (3 / 6)";
+    std::string code = "(20 + 12) * 5";
     std::vector<std::string> tokens = tokenize(code);
     codegen(tokens);
     program.push_back("mov eax, 60");
